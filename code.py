@@ -8,6 +8,7 @@ import digitalio
 import adafruit_esp32spi.adafruit_esp32spi_socket as socket
 import adafruit_esp32spi.adafruit_esp32spi_wsgiserver as server
 import adafruit_requests as requests
+import adafruit_minimqtt
 from adafruit_matrixportal.matrixportal import MatrixPortal
 from adafruit_wsgi.wsgi_app import WSGIApp
 
