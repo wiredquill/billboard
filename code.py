@@ -22,7 +22,7 @@ displayio.release_displays()
 # --- Display setup ---
 matrixportal = MatrixPortal(status_neopixel=board.NEOPIXEL, debug=False, bit_depth=5)
 
-# Display ID = 0
+# Display ID = 0  - Center of the Screen
 matrixportal.add_text(
     text_font=terminalio.FONT, #"fonts/Arial-12.bdf", #
     text_position=((matrixportal.graphics.display.width // 2), (matrixportal.graphics.display.height // 2) - 1),
@@ -32,7 +32,7 @@ matrixportal.add_text(
 
 )
 
-# Display ID = 1
+# Display ID = 1 - Center of the Screen w/ Scrolling
 matrixportal.add_text(
     text_font=terminalio.FONT, #"fonts/Arial-12.bdf", #
     text_position=((matrixportal.graphics.display.width // 2), (matrixportal.graphics.display.height // 2) - 1),
@@ -42,7 +42,7 @@ matrixportal.add_text(
 
 )
 
-# Learn guide title (ID = 2)
+# Display ID = 2 - Lower 1/3 of Screen w/ Scrolling
 matrixportal.add_text(
     text_font=terminalio.FONT,
     text_position=(2, 25),
@@ -56,11 +56,11 @@ SCROLL_DELAY = 0.1
 # --- Network setup ---
 network = matrixportal.network
 
-
+matrixportal.set_text("Connecting", 0)
 esp = network._wifi.esp
 esp.reset()
 network.connect()
-matrixportal.set_text("Connection...", 0)
+
 
 # --- Display IP Address and set ipaddr variable to IP address ---
 ip = esp.ip_address
