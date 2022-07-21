@@ -11,6 +11,12 @@ import adafruit_requests as requests
 from adafruit_matrixportal.matrixportal import MatrixPortal
 from adafruit_wsgi.wsgi_app import WSGIApp
 
+# Setup Default colors
+
+red =   "0xff0000"
+green = "0x00f900"
+blue =  "0x0433ff"
+
 try:
     from secrets import secrets
 except ImportError:
@@ -82,9 +88,9 @@ def clear():
 def load_image(self, bmp):
     matrixportal.set_background(bmp)
 
-def load_text(self, msg, *, text_color="0x000000", bg="0x10BA08"):
+def load_text(msg, *, text_color="0x000000", bg="0x10BA08"):
     matrixportal.set_background(bg)
-    matrixportal.set_text(msg, self.text_index)
+    matrixportal.set_text(msg, 0)
     matrixportal.set_text_color(int(text_color,16), 0)
 
 def load_stext(self, msg, *, text_color="0x000000", bg="0x10BA08"):
@@ -127,10 +133,8 @@ def plain_text(request, text, fg, bg):  # pylint: disable=unused-argument
 
 @web_app.route("/test")
 def plain_text(request):  # pylint: disable=unused-argument
-    matrixportal.set_text("In a Meeting")
-    return ("200 OK", [], "In Meeting")
-    matrixportal.set_text_scroll_rate = .1
-    matrixportal.set_scrolling=True
+ #   msg = "Tacos"
+ #   load_text()
     return ("200 OK", [], "test")
 
 @web_app.route("/clear")
@@ -144,7 +148,9 @@ def plain_text(request):  # pylint: disable=unused-argument
 
 @web_app.route("/meeting")
 def plain_text(request):  # pylint: disable=unused-argument
+    matrixportal.set_text_color(red, 0)
     matrixportal.set_text("In a \nMeeting")
+
     return ("200 OK", [], "In Meeting")
 
 
