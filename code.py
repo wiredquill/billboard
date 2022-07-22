@@ -42,7 +42,7 @@ matrixportal.add_text(
 matrixportal.add_text(
     text_font=terminalio.FONT, #"fonts/Arial-12.bdf", #
     text_position=((matrixportal.graphics.display.width // 2), (matrixportal.graphics.display.height // 2) - 1),
-    text_scale=1,
+    text_scale=2,
     scrolling=True,
     text_anchor_point=(.5,.5) # This centers the text (approximately)
 
@@ -93,10 +93,11 @@ def load_text(msg, text_color="0x000000", bg="0x10BA08"):
     matrixportal.set_text(msg, 0)
     matrixportal.set_text_color(int(text_color,16), 0)
 
-def load_stext(self, msg, *, text_color="0x000000", bg="0x10BA08"):
+def load_stext(msg, text_color="0x000000", bg="0x10BA08"):
     matrixportal.set_background(bg)
-    matrixportal.set_text(msg, self.stext_index)
+    matrixportal.set_text(msg, 1)
     matrixportal.set_text_color(int(text_color,16), 1)
+    matrixportal.scroll_text(SCROLL_DELAY)
 
 # Setup Web URL
 web_app = WSGIApp()
@@ -133,7 +134,11 @@ def plain_text(request, text, fg, bg):  # pylint: disable=unused-argument
 
 @web_app.route("/test")
 def plain_text(request):  # pylint: disable=unused-argument
-    load_text('In a \nMeeting', text_color=green, bg=red)
+#   load_text('In a \nMeeting', text_color=green, bg=red)
+    clear()
+    matrixportal.set_text('Fuck Trump', 1)
+#    matrixportal.set_text_color(int(text_color,16), 1)
+    matrixportal.scroll_text(SCROLL_DELAY)
     return ("200 OK", [], "test")
 
 @web_app.route("/clear")
