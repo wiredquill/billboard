@@ -88,8 +88,8 @@ def clear():
 def load_image(self, bmp):
     matrixportal.set_background(bmp)
 
-def load_text(msg, *, text_color="0x000000", bg="0x10BA08"):
-    matrixportal.set_background(bg)
+def load_text(msg, text_color="0x000000", bg="0x10BA08"):
+    matrixportal.set_background(int(bg))
     matrixportal.set_text(msg, 0)
     matrixportal.set_text_color(int(text_color,16), 0)
 
@@ -133,8 +133,7 @@ def plain_text(request, text, fg, bg):  # pylint: disable=unused-argument
 
 @web_app.route("/test")
 def plain_text(request):  # pylint: disable=unused-argument
- #   msg = "Tacos"
- #   load_text()
+    load_text('In a \nMeeting', text_color=green, bg=red)
     return ("200 OK", [], "test")
 
 @web_app.route("/clear")
@@ -148,9 +147,7 @@ def plain_text(request):  # pylint: disable=unused-argument
 
 @web_app.route("/meeting")
 def plain_text(request):  # pylint: disable=unused-argument
-    matrixportal.set_text_color(red, 0)
-    matrixportal.set_text("In a \nMeeting")
-
+    load_text('In a \nMeeting', text_color='0x10BA08', bg='0')
     return ("200 OK", [], "In Meeting")
 
 
@@ -177,6 +174,7 @@ server.set_interface(esp)
 wsgiServer = server.WSGIServer(80, application=web_app)
 wsgiServer.start()
 
+load_text('In a \nMeeting', text_color=green, bg=red)
 
 while True:
     try:
@@ -184,6 +182,3 @@ while True:
     except (ValueError, RuntimeError) as e:
         print("Failed to update, retrying\n", e)
         continue
-
-
-
