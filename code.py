@@ -31,7 +31,7 @@ matrixportal = MatrixPortal(status_neopixel=board.NEOPIXEL, debug=False, bit_dep
 # Display ID = 0  - Center of the Screen
 matrixportal.add_text(
     text_font=terminalio.FONT, #"fonts/Arial-12.bdf", #
-    text_position=((matrixportal.graphics.display.width // 2), (matrixportal.graphics.display.height // 2) - 1),
+    text_position=((matrixportal.graphics.display.width // 2), (matrixportal.graphics.display.height // 3) - 1),
     text_scale=1,
     scrolling=False,
     text_anchor_point=(.5,.5) # This centers the text (approximately)
@@ -39,14 +39,14 @@ matrixportal.add_text(
 )
 
 # Display ID = 1 - Center of the Screen w/ Scrolling
-matrixportal.add_text(
-    text_font=terminalio.FONT, #"fonts/Arial-12.bdf", #
-    text_position=((matrixportal.graphics.display.width // 2), (matrixportal.graphics.display.height // 2) - 1),
-    text_scale=2,
-    scrolling=True,
-    text_anchor_point=(.5,.5) # This centers the text (approximately)
+#matrixportal.add_text(
+#    text_font=terminalio.FONT, #"fonts/Arial-12.bdf", #
+#    text_position=((matrixportal.graphics.display.width // 2), (matrixportal.graphics.display.height // 2) - 1),
+#    text_scale=2,
+#    scrolling=True,
+#    text_anchor_point=(.5,.5) # This centers the text (approximately)
 
-)
+#)
 
 # Display ID = 2 - Lower 1/3 of Screen w/ Scrolling
 matrixportal.add_text(
@@ -74,8 +74,6 @@ print('gateway ip: {}.{}.{}.{}'.format(ip[0],ip[1],ip[2],ip[3]))
 ipaddr = ('{}.{}.{}.{}'.format(ip[0],ip[1],ip[2],ip[3]))
 print(ipaddr)
 
-def meeting():
-    matrixportal.set_text("Meeting")
 
 def network():
     matrixportal.set_text(ipaddr)
@@ -85,7 +83,7 @@ def clear():
     matrixportal.set_background(0)
     matrixportal.set_text_color(0x000000)
 
-def load_image(self, bmp):
+def load_image(bmp):
     matrixportal.set_background(bmp)
 
 def load_text(msg, text_color="0x000000", bg="0x10BA08"):
@@ -94,9 +92,17 @@ def load_text(msg, text_color="0x000000", bg="0x10BA08"):
     matrixportal.set_text_color(int(text_color,16), 0)
 
 def load_stext(msg, text_color="0x000000", bg="0x10BA08"):
-    matrixportal.set_background(bg)
+    matrixportal.set_background(int(bg))
     matrixportal.set_text(msg, 1)
     matrixportal.set_text_color(int(text_color,16), 1)
+#    matrixportal.scroll_text(SCROLL_DELAY)
+
+def motion(msg):
+    clear()
+    matrixportal.set_text_color(int(blue,16), 0)
+    matrixportal.set_text(msg, 0)
+    matrixportal.set_text('Motion       Motion', 1)
+    matrixportal.set_text_color(int(red,16), 1)
     matrixportal.scroll_text(SCROLL_DELAY)
 
 # Setup Web URL
@@ -105,6 +111,7 @@ web_app = WSGIApp()
 @web_app.route("/")
 def simple_app(request):
  #   c = {billboard.cur: billboard.content[billboard.keys[billboard.cur]]}
+    network()
     return ['200 OK', [], "json.dumps(c)"]
 
 
@@ -137,9 +144,17 @@ def plain_text(request):  # pylint: disable=unused-argument
 #   load_text('In a \nMeeting', text_color=green, bg=red)
     clear()
     matrixportal.set_text('Fuck Trump', 1)
-#    matrixportal.set_text_color(int(text_color,16), 1)
+    matrixportal.set_text_color(int(red, 16), 1)
     matrixportal.scroll_text(SCROLL_DELAY)
     return ("200 OK", [], "test")
+
+@web_app.route("/motion/<text>")
+def plain_text(request, text):  # pylint: disable=unused-argument
+#   load_text('In a \nMeeting', text_color=green, bg=red)
+    msg=text.replace('_', ' ')
+    motion(msg)
+    return ("200 OK", [], "Motion")
+
 
 @web_app.route("/clear")
 def plain_text(request):  # pylint: disable=unused-argument
@@ -174,12 +189,14 @@ def parse_content(text=None,fg=None,bg=None,*):
 #matrixportal.set_text_color('0x10BA08')
 matrixportal.set_text(ipaddr)
 
+
 # Start the Webserver
 server.set_interface(esp)
 wsgiServer = server.WSGIServer(80, application=web_app)
 wsgiServer.start()
 
-load_text('In a \nMeeting', text_color=green, bg=red)
+#load_stext('Farking Hell', text_color=green, bg=red)
+#matrixportal.scroll_text(.1)
 
 while True:
     try:
