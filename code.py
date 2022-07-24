@@ -13,9 +13,14 @@ from adafruit_wsgi.wsgi_app import WSGIApp
 
 # Setup Default colors
 
-red =   "0xff0000"
-green = "0x00f900"
-blue =  "0x0433ff"
+red    = "0xff0000"
+green  = "0x00f900"
+blue   = "0x0433ff"
+purple = "0x942192"
+orange = "0xff9300"
+yellow = "0xfffb00"
+white  = "0xffffff"
+black  = "0x000000"
 
 try:
     from secrets import secrets
