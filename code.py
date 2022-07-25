@@ -39,22 +39,22 @@ matrixportal = MatrixPortal(status_neopixel=board.NEOPIXEL, debug=False, bit_dep
 # Display ID = 0  - Center of the Screen
 matrixportal.add_text(
     text_font=terminalio.FONT, #"fonts/Arial-12.bdf", #
-    text_position=((matrixportal.graphics.display.width // 2), (matrixportal.graphics.display.height // 3) - 1),
+    text_position=((matrixportal.graphics.display.width // 2), (matrixportal.graphics.display.height // 2) - 1),
     text_scale=1,
     scrolling=False,
     text_anchor_point=(.5,.5) # This centers the text (approximately)
 
 )
 
-# Display ID = 1 - Center of the Screen w/ Scrolling
-#matrixportal.add_text(
-#    text_font=terminalio.FONT, #"fonts/Arial-12.bdf", #
-#    text_position=((matrixportal.graphics.display.width // 2), (matrixportal.graphics.display.height // 2) - 1),
-#    text_scale=2,
-#    scrolling=True,
-#    text_anchor_point=(.5,.5) # This centers the text (approximately)
+# Display ID = 1 - Center of the Screen for Scrolling
+matrixportal.add_text(
+    text_font=terminalio.FONT, #"fonts/Arial-12.bdf", #
+    text_position=((matrixportal.graphics.display.width // 2), (matrixportal.graphics.display.height // 3) - 1),
+    text_scale=1,
+    scrolling=False,
+    text_anchor_point=(.5,.5) # This centers the text (approximately)
 
-#)
+)
 
 # Display ID = 2 - Lower 1/3 of Screen w/ Scrolling
 matrixportal.add_text(
@@ -70,6 +70,7 @@ SCROLL_DELAY = 0.1
 # --- Network setup ---
 network = matrixportal.network
 
+matrixportal.set_text_color(purple)
 matrixportal.set_text("Connecting", 0)
 esp = network._wifi.esp
 esp.reset()
@@ -90,6 +91,9 @@ def clear():
     matrixportal.set_text("")
     matrixportal.set_background(0)
     matrixportal.set_text_color(0x000000)
+    matrixportal.set_text("", 1)
+    matrixportal.set_background(0, 1)
+    matrixportal.set_text_color(0x000000, 1)
 
 def load_image(bmp):
     matrixportal.set_background(bmp)
@@ -101,16 +105,17 @@ def load_text(msg, text_color="0x000000", bg="0x10BA08"):
 
 def load_stext(msg, text_color="0x000000", bg="0x10BA08"):
     matrixportal.set_background(int(bg))
-    matrixportal.set_text(msg, 1)
-    matrixportal.set_text_color(int(text_color,16), 1)
+    matrixportal.set_text(msg, 2)
+    matrixportal.set_text_color(int(text_color,16), 2)
 #    matrixportal.scroll_text(SCROLL_DELAY)
 
 def motion(msg):
     clear()
-    matrixportal.set_text_color(int(blue,16), 0)
-    matrixportal.set_text(msg, 0)
-    matrixportal.set_text('Motion       Motion', 1)
-    matrixportal.set_text_color(int(red,16), 1)
+    matrixportal.set_background(int(black))
+    matrixportal.set_text_color(int(purple,16), 1)
+    matrixportal.set_text(msg, 1)
+    matrixportal.set_text('Motion       Motion', 2)
+    matrixportal.set_text_color(int(orange,16), 2)
     matrixportal.scroll_text(SCROLL_DELAY)
 
 # Setup Web URL
@@ -149,6 +154,14 @@ def plain_text(request, text, fg, bg):  # pylint: disable=unused-argument
     matrixportal.set_text_scroll_rate = .1
     matrixportal.set_scrolling=True
     return ("200 OK", ["POST"], json.dumps(c))
+
+# Display Text with Red scrolling 'Motion' below
+@web_app.route("/image/<text>")
+def plain_text(request, image_name):  # pylint: disable=unused-argument
+    image = 'images/' + image_name + '.bmp'
+    print(image)
+    load_image(image)
+    return ("200 OK", [], "Load image")
 
 @web_app.route("/test")
 def plain_text(request):  # pylint: disable=unused-argument
@@ -209,7 +222,7 @@ def parse_content(text=None,fg=None,bg=None,*):
 
 # Display IP Address
 
-#matrixportal.set_text_color('0x10BA08')
+matrixportal.set_text_color(blue)
 matrixportal.set_text(ipaddr)
 
 
