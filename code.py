@@ -22,12 +22,15 @@ yellow = "0xfffb00"
 white  = "0xffffff"
 black  = "0x000000"
 
+# --- import Secrets for Wifi and such ---
+
 try:
     from secrets import secrets
 except ImportError:
     print("WiFi secrets are kept in secrets.py, please add them there!")
     raise
 
+# -- Clear any previous display ---
 displayio.release_displays()
 
 # --- Display setup ---
@@ -119,7 +122,8 @@ def simple_app(request):
     network()
     return ['200 OK', [], "json.dumps(c)"]
 
-
+# Display Text sent to /text
+#   --- Example ---  curl 10.0.15.39/text/"Front_Door_Motion"/"0xDA0202"/"0x000000"
 @web_app.route("/text/<text>/<fg>/<bg>")
 def plain_text(request, text, fg, bg):  # pylint: disable=unused-argument
     print("text received")
@@ -131,6 +135,8 @@ def plain_text(request, text, fg, bg):  # pylint: disable=unused-argument
     matrixportal.set_text_color(int(fg))
     return ("200 OK", ["POST"], json.dumps(c))
 
+# Scroll Text sent to /stext
+#   --- Example ---  curl 10.0.15.39/stext/"Front_Door_Motion"/"0xDA0202"/"0x000000"
 @web_app.route("/stext/<text>/<fg>/<bg>")
 def plain_text(request, text, fg, bg):  # pylint: disable=unused-argument
     print("text received")
@@ -147,12 +153,10 @@ def plain_text(request, text, fg, bg):  # pylint: disable=unused-argument
 @web_app.route("/test")
 def plain_text(request):  # pylint: disable=unused-argument
 #   load_text('In a \nMeeting', text_color=green, bg=red)
-    clear()
-    matrixportal.set_text('Fuck Trump', 1)
-    matrixportal.set_text_color(int(red, 16), 1)
-    matrixportal.scroll_text(SCROLL_DELAY)
+    matrixportal.set_background('images/rancher.bmp')
     return ("200 OK", [], "test")
 
+# Display Text with Red scrolling 'Motion' below
 @web_app.route("/motion/<text>")
 def plain_text(request, text):  # pylint: disable=unused-argument
 #   load_text('In a \nMeeting', text_color=green, bg=red)
@@ -160,7 +164,7 @@ def plain_text(request, text):  # pylint: disable=unused-argument
     motion(msg)
     return ("200 OK", [], "Motion")
 
-
+# Clears the forground and background for IDX 0
 @web_app.route("/clear")
 def plain_text(request):  # pylint: disable=unused-argument
     matrixportal.set_background(0)
@@ -169,11 +173,25 @@ def plain_text(request):  # pylint: disable=unused-argument
     matrixportal.set_text("")
     return ("200 OK", [], "On Air")
 
-
+# Enter Meeting Mode
 @web_app.route("/meeting")
 def plain_text(request):  # pylint: disable=unused-argument
     load_text('In a \nMeeting', text_color='0x10BA08', bg='0')
     return ("200 OK", [], "In Meeting")
+
+# Enter Rancher Mode
+@web_app.route("/rancher")
+def plain_text(request):  # pylint: disable=unused-argument
+    clear()
+    load_image('images/rancher.bmp')
+    return ("200 OK", [], "Rancher")
+
+# Enter Rancher Mode
+@web_app.route("/on-air")
+def plain_text(request):  # pylint: disable=unused-argument
+    clear()
+    load_image('images/on-air.bmp')
+    return ("200 OK", [], "On Air")
 
 
 def parse_content(text=None,fg=None,bg=None,*):
