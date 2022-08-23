@@ -94,7 +94,9 @@ def clear():
     matrixportal.set_text("", 1)
     matrixportal.set_background(0, 1)
     matrixportal.set_text_color(0x000000, 1)
-
+    matrixportal.set_text("", 2)
+    matrixportal.set_background(0, 2)
+    matrixportal.set_text_color(0x000000, 2)
 def load_image(bmp):
     matrixportal.set_background(bmp)
 
@@ -115,7 +117,7 @@ def motion(msg):
     matrixportal.set_text_color(int(purple,16), 1)
     matrixportal.set_text(msg, 1)
     matrixportal.set_text('Motion       Motion', 2)
-    matrixportal.set_text_color(int(orange,16), 2)
+    matrixportal.set_text_color(int(red,16), 2)
     matrixportal.scroll_text(SCROLL_DELAY)
 
 # Setup Web URL
@@ -180,12 +182,9 @@ def plain_text(request, text):  # pylint: disable=unused-argument
 # Clears the forground and background for IDX 0
 @web_app.route("/clear")
 def plain_text(request):  # pylint: disable=unused-argument
-    matrixportal.set_background(0)
-    matrixportal.set_text_color(0x000000)
-    matrixportal.set_scrolling=False
-    matrixportal.set_text("")
-    return ("200 OK", [], "On Air")
-
+# Display 0
+    clear()
+    return ("200 OK", [], "Cleared all Dispalys")
 # Enter Meeting Mode
 @web_app.route("/meeting")
 def plain_text(request):  # pylint: disable=unused-argument
